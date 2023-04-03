@@ -3,7 +3,7 @@
 %% Remove ROIs
 if exist('badComponents','var') && ~exist('badComFlag','var')
     [DeltaFoverF,dDeltaFoverF,ROI,ROIcentroid,Noise_Power,A] = ...
-        removeROI(DeltaFoverF,dDeltaFoverF,ROI,ROIcentroid,Noise_Power,A,unique(122));
+        removeROI(DeltaFoverF,dDeltaFoverF,ROI,ROIcentroid,Noise_Power,A,unique(badComponents));
     badComFlag = 1;
 end
 %% Fix centroids
@@ -16,8 +16,8 @@ end
 set(0,'DefaultFigureWindowStyle','normal')
 addpath(genpath('main'));
 addpath(genpath('Pipelines'));
-std_threshold = 2;
-static_threshold = .005;
+std_threshold = 8;
+static_threshold = .01;
 Spikes = Spike_Detector_Single(dDeltaFoverF,std_threshold,static_threshold);
 %Excude inactive cells
 % numSpikes = sum(Spikes,2);

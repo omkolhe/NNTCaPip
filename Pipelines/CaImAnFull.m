@@ -143,7 +143,7 @@ for fileNum = 1:numFiles
     overlap = [6,6];                        % amount of overlap in each dimension (optional, default: [6,6])
     
     patches = construct_patches(sizY(1:end-1),patch_size,overlap);
-    K = 40;                  % number of components to be found per patch
+    K = 25;                  % number of components to be found per patch
     tau = [];                 % std of gaussian kernel (size of neuron) default:5
     p = 2;                   % order of autoregressive system (p = 0 no dynamics, p=1 just decay, p = 2, both rise and decay)
     merge_thr = 0.4;         % merging threshold
@@ -168,18 +168,12 @@ for fileNum = 1:numFiles
         'search_method','ellipse');                 % method for determining footprint of spatial components 'ellipse' or 'dilate' (default: 'dilate')
     
     %% Run on patches
-    CNMFmod = 0;
-    if CNMFmod
-        data.Y1 = customSpatialFilt(double(data.Y),options);
-        [A,b,C,f,S,P,RESULTS,YrA] = run_CNMF_patches(data.Y1,K,patches,tau,0,options);  % do not perform deconvolution here since we have downsampled
-        Cn = correlation_image_max(data.Y1,8);
-    else
-        [A,b,C,f,S,P,RESULTS,YrA] = run_CNMF_patches(data.Y,K,patches,tau,0,options);  % do not perform deconvolution here since we have downsampled
-        Cn = correlation_image_max(data.Y,8);
-    end
+    [A,b,C,f,S,P,RESULTS,YrA] = run_CNMF_patches(data.Y,K,patches,tau,0,options);  % do not perform deconvolution here since we have downsampled
+    Cn = correlation_image_max(data.Y,8);
 
-%     [results, center, Cn, PNR, save_avi] = greedyROI_endoscope(single(Y), 100, options);
-%     [Ain, Cin, bin, fin, center] = initialize_components(data.Y, K, tau, options);
+
+    %     [results, center, Cn, PNR, save_avi] = greedyROI_endoscope(single(Y), 100, options);
+    %     [Ain, Cin, bin, fin, center] = initialize_components(data.Y, K, tau, options);
 % [center, Cn, ~] = initComponents_endoscope(Y, K, patch_par, debug_on, save_avi);
 
     %% classify components
