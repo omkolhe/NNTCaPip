@@ -93,7 +93,9 @@ figure,plot(0:1/LFP.Fs:(length(LFP.Vmfilt)-1)/LFP.Fs,LFP.Vmfilt);xlim([0 length(
 figure,plot(0:1/LFP.Fs:(length(LFP.betaLFP)-1)/LFP.Fs,LFP.betaLFP);xlim([0 length(LFP.betaLFP)/LFP.Fs])
 
 %% Behavior
-Vel = EncoderVelocity2(abs(encoder(:,1)),abs(encoder(:,2))); % position;time
+
+[Vel, pos] = readPos(time);
+
 %%Generate Rest/Run Ca Spikes
 thresh = .3;
 if ~exist('CaFR','var'), CaFR = 30.048;end % sets to default framerate
