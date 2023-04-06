@@ -1,5 +1,10 @@
 %% NNT Calcium Pipeline
-% Github Version 4.1
+%% Setting up the environment 
+set(0,'DefaultFigureWindowStyle','normal')
+format compact;
+addpath(genpath('main'));
+addpath(genpath('Pipelines'))
+
 %% Remove ROIs
 if exist('badComponents','var') && ~exist('badComFlag','var')
     [DeltaFoverF,dDeltaFoverF,ROI,ROIcentroid,Noise_Power,A] = ...
@@ -12,23 +17,47 @@ for i = 1:length(ROI)
     blah = vertcat(ROI{i}{:});
     ROIcentroid(i,:) = floor(mean(blah,1));
 end
-%% Analysis
-set(0,'DefaultFigureWindowStyle','normal')
-addpath(genpath('main'));
-addpath(genpath('Pipelines'));
+%% Spike detection from dF/F
+
 std_threshold = 8;
 static_threshold = .01;
 Spikes = Spike_Detector_Single(dDeltaFoverF,std_threshold,static_threshold);
+figure();Show_Spikes_new(Spikes);
+Spikes2 = rasterizeDFoF(DeltaFoverF,3,0.01);
+figure();Show_Spikes_new(Spikes2)
+
+%% Behavior
+[Vel, pos] = readPos(time);                                                % reading and resampling 
+% Generate Rest/Run Ca Spikes
+thresh = .3;                                                               % velocity threshold for run/rest 
+if ~exist('CaFR','var'), CaFR = 30.048;end                                 % sets to default framerate
+[runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,1);    % state 1/0 for run/rest
+[restSpikes,restSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,0);  % state 1/0 for run/rest
+
+if iscell(runSpikes)
+    runSpikes = horzcat(runSpikes{:});
+end
+if iscell(restSpikes)
+   restSpikes = horzcat(restSpikes{:});
+end
+runCa = DeltaFoverF(:,runSpikesFrame);
+restCa = DeltaFoverF(:,restSpikesFrame);
+
+%%
 %Excude inactive cells
 % numSpikes = sum(Spikes,2);
 % keepSpikes = find(numSpikes>(.01*mean(numSpikes)));
 % Spikes = Spikes(keepSpikes,:);
+
+
 [coactive_cells,detected_spikes] = coactive_index(Spikes,size(Spikes,2));
 cell_count = length(ROI);
 time = time_adjust(size(DeltaFoverF,2),30.048);
 for i = 1:size(DeltaFoverF,1)
     calcium_avg{i} = STA(DeltaFoverF(i,:),2,250);%std, window (frames)
 end
+
+
 
 % Perform shuffling and pairwise if data is small enough
 if size(DeltaFoverF,2)<2000    
@@ -93,10 +122,9 @@ figure,plot(0:1/LFP.Fs:(length(LFP.Vmfilt)-1)/LFP.Fs,LFP.Vmfilt);xlim([0 length(
 figure,plot(0:1/LFP.Fs:(length(LFP.betaLFP)-1)/LFP.Fs,LFP.betaLFP);xlim([0 length(LFP.betaLFP)/LFP.Fs])
 
 %% Behavior
-
 [Vel, pos] = readPos(time);
 
-%%Generate Rest/Run Ca Spikes
+% Generate Rest/Run Ca Spikes
 thresh = .3;
 if ~exist('CaFR','var'), CaFR = 30.048;end % sets to default framerate
 [runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,1); % state 1/0 for run/rest
