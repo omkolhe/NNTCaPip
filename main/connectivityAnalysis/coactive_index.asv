@@ -1,6 +1,6 @@
 function [coactive_cells,detected_spikes] = coactive_index(Spikes,bin)
 %% Calculates the number of celss/ROIs that are active/spiking in a time bin - detected_spikes
-%% Calculates the percentage of cells/ROIs that are active in a time bin - coactive_cells
+%% Calculates the percentage of cells/ROIs that re
 
     for i = 1:length(Spikes(1,:))
         total = length(Spikes(:,i));

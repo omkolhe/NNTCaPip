@@ -4,6 +4,7 @@ set(0,'DefaultFigureWindowStyle','normal')
 format compact;
 addpath(genpath('main'));
 addpath(genpath('Pipelines'))
+addpath(genpath('Plotting'))
 
 %% Remove ROIs
 if exist('badComponents','var') && ~exist('badComFlag','var')
@@ -19,12 +20,10 @@ for i = 1:length(ROI)
 end
 %% Spike detection from dF/F
 
-std_threshold = 8;
+std_threshold = 2.5;      % from Carrilo-Reid and Jordan Hamm's papers
 static_threshold = .01;
-Spikes = Spike_Detector_Single(dDeltaFoverF,std_threshold,static_threshold);
-figure();Show_Spikes_new(Spikes);
-Spikes2 = rasterizeDFoF(DeltaFoverF,3,0.01);
-figure();Show_Spikes_new(Spikes2)
+Spikes = rasterizeDFoF(DeltaFoverF,std_threshold,static_threshold);
+figure('Name','Spiking Raster');Show_Spikes_new(Spikes)
 
 %% Behavior
 [Vel, pos] = readPos(time);                                                % reading and resampling 
