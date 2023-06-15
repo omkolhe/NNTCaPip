@@ -1,4 +1,4 @@
-function leverCaModulation(DeltaFoverF,Behaviour)
+function Calcium = leverCaModulation(DeltaFoverF,Behaviour)
 caM = mean(DeltaFoverF,2);
 for i = 1:Behaviour.nHit
     Calcium.hit.caTrace(i).DeltaFoverF = DeltaFoverF(:,Behaviour.hitTrace(i).caIndex);
