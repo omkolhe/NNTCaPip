@@ -9,7 +9,7 @@ end
 
 resting_position = 285;
 flip = -1;
-
+nlengthBeforePull = round(parameters.windowAfterPull/parameters.ts);
 nlength = round(parameters.windowAfterPull/parameters.ts + parameters.windowAfterPull/parameters.ts + 1);
 
 B = readmatrix([enpath,'/',enfile]);
@@ -62,6 +62,8 @@ for i=1:Behaviour.nHit
         Behaviour.hitTrace(i).trace(nlength+1:end) = [];
         Behaviour.hitTrace(i).time(nlength+1:end) = []; 
     end
+    Behaviour.hitTrace(i).caTime = Behaviour.hitTrace(i).time + (Behaviour.hit(i,4)-(nlengthBeforePull*parameters.ts));
+    Behaviour.hitTrace(i).caIndex = [Behaviour.hit(i,3)-nlengthBeforePull:1:nlengthBeforePull+Behaviour.hit(i,3)];
 end
 
 for i=1:Behaviour.nMiss
@@ -84,6 +86,8 @@ for i=1:Behaviour.nMiss
         Behaviour.missTrace(i).trace(nlength+1:end) = [];
         Behaviour.missTrace(i).time(nlength+1:end) = []; 
     end
+    Behaviour.missTrace(i).caTime = Behaviour.missTrace(i).time + (Behaviour.miss(i,4)-(nlengthBeforePull*parameters.ts));
+    Behaviour.missTrace(i).caIndex = [Behaviour.miss(i,3)-nlengthBeforePull:1:nlengthBeforePull+Behaviour.miss(i,3)];
 end
 
 
