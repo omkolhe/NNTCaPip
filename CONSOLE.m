@@ -56,3 +56,4 @@ ylabel('Lever deflection (in mV)');xlabel('Time (in s)');title('Average Lever Tr
 
 
 %% Calcium Modulation Index
+Calcium = leverCaModulation(DeltaFoverF,Behaviour)
