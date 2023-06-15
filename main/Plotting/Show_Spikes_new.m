@@ -11,7 +11,7 @@ for i = 1:y
             spikePlot(i,ii) = -10;
         end
     end
-    plot(spikePlot(i,:),'.'); hold on;
+    plot(spikePlot(i,:),'k.'); hold on;
     baseline = baseline + 1;
 end
 ylim ([0,y+1]);
