@@ -21,7 +21,7 @@ end
 
 %% Parameters 
 parameters.caFR = 30.048;
-parameters.ts = 1/parameters.parameters.caFR;
+parameters.ts = 1/parameters.caFR;
 parameters.caTime = 0:parameters.ts:(size(DeltaFoverF,2)-1)*parameters.ts;
 parameters.windowBeforePull = 1; % in seconds
 parameters.windowAfterPull = 1; % in seconds
@@ -35,7 +35,7 @@ figure('Name','Spiking Raster');Show_Spikes_new(Spikes);
 %% Behavior
 
 [Behaviour] = readLever(parameters);
-
+%%
 figure();
 for i=1:Behaviour.nHit
     plot(Behaviour.hitTrace(i).time,Behaviour.hitTrace(i).trace,'Color',[0 0 0 0.2],'LineWidth',1.5);
@@ -43,6 +43,7 @@ for i=1:Behaviour.nHit
 end
 plot(Behaviour.hitTrace(1).time,mean(horzcat(Behaviour.hitTrace(1:end).trace)),2);
 
+%% Calcium Triggered Analysis
 figure();
 imagesc(parameters.caTime,1:1:size(DeltaFoverF,1),DeltaFoverF);colormap('hot'); 
 
