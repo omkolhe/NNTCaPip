@@ -18,20 +18,41 @@ for i = 1:length(ROI)
     blah = vertcat(ROI{i}{:});
     ROIcentroid(i,:) = floor(mean(blah,1));
 end
+
+%% Parameters 
+parameters.caFR = 30.048;
+parameters.ts = 1/parameters.parameters.caFR;
+parameters.caTime = 0:parameters.ts:(size(DeltaFoverF,2)-1)*paramerters.ts;
+parameters.windowBeforePull = 1; % in seconds
+parameters.windowAfterPull = 1; % in seconds
 %% Spike detection from dF/F
 
-std_threshold = 2.5;      % from Carrilo-Reid and Jordan Hamm's papers
+std_threshold = 3;      % from Carrilo-Reid and Jordan Hamm's papers
 static_threshold = .01;
 Spikes = rasterizeDFoF(DeltaFoverF,std_threshold,static_threshold);
-figure('Name','Spiking Raster');Show_Spikes_new(Spikes)
+figure('Name','Spiking Raster');Show_Spikes_new(Spikes);
 
 %% Behavior
-[Vel, pos] = readPos(time);                                                % reading and resampling 
-% Generate Rest/Run Ca Spikes
-thresh = .3;                                                               % velocity threshold for run/rest 
-if ~exist('CaFR','var'), CaFR = 30.048;end                                 % sets to default framerate
-[runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,1);    % state 1/0 for run/rest
-[restSpikes,restSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,0);  % state 1/0 for run/rest
+
+[Behaviour] = readLever(parameters);
+
+figure();
+for i=1:Behaviour.nHit
+    plot(Behaviour.hitTrace(i).time,Behaviour.hitTrace(i).trace,'Color',[0 0 0 0.2],'LineWidth',1.5);
+    hold on;
+end
+plot(Behaviour.hitTrace(1).time,mean(horzcat(Behaviour.hitTrace(1:end).trace)),2);
+
+figure();
+imagesc(parameters.caTime,1:1:size(DeltaFoverF,1),DeltaFoverF);colormap('hot'); 
+
+
+
+%%
+
+if ~exist('parameters.caFR','var'), parameters.caFR = 30.048;end                                 % sets to default framerate
+[runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,parameters.caFR,thresh,1);    % state 1/0 for run/rest
+[restSpikes,restSpikesFrame] = spikeState(Vel,Spikes,time,parameters.caFR,thresh,0);  % state 1/0 for run/rest
 
 if iscell(runSpikes)
     runSpikes = horzcat(runSpikes{:});
@@ -125,9 +146,9 @@ figure,plot(0:1/LFP.Fs:(length(LFP.betaLFP)-1)/LFP.Fs,LFP.betaLFP);xlim([0 lengt
 
 % Generate Rest/Run Ca Spikes
 thresh = .3;
-if ~exist('CaFR','var'), CaFR = 30.048;end % sets to default framerate
-[runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,1); % state 1/0 for run/rest
-[restSpikes,restSpikesFrame] = spikeState(Vel,Spikes,time,CaFR,thresh,0); % state 1/0 for run/rest
+if ~exist('parameters.caFR','var'), parameters.caFR = 30.048;end % sets to default framerate
+[runSpikes,runSpikesFrame] = spikeState(Vel,Spikes,time,parameters.caFR,thresh,1); % state 1/0 for run/rest
+[restSpikes,restSpikesFrame] = spikeState(Vel,Spikes,time,parameters.caFR,thresh,0); % state 1/0 for run/rest
 
 if iscell(runSpikes)
     runSpikes = horzcat(runSpikes{:});
@@ -165,9 +186,9 @@ scatter3(X(idx==2,1),X(idx==2,2),X(idx==2,3),10,[1 0 0],'filled'); %[0 148 68]/2
 
 
 %% Beta events within ensembles
-runLFP = betaCaEnsemble(runSpikes,runSpikesFrame,runEnsemble,LFP,CaFR); 
+runLFP = betaCaEnsemble(runSpikes,runSpikesFrame,runEnsemble,LFP,parameters.caFR); 
 
-restLFP = betaCaEnsemble(restSpikes,restSpikesFrame,restEnsemble,LFP,CaFR); 
+restLFP = betaCaEnsemble(restSpikes,restSpikesFrame,restEnsemble,LFP,parameters.caFR); 
 
 [peakAlign,norm,f,stats] = IntrabetaAnalysis(runLFP.beta);
 [peakAlign,norm,f,stats] = IntrabetaAnalysis(restLFP.beta);

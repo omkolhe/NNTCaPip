@@ -143,7 +143,7 @@ for fileNum = 1:numFiles
     overlap = [6,6];                        % amount of overlap in each dimension (optional, default: [6,6])
     
     patches = construct_patches(sizY(1:end-1),patch_size,overlap);
-    K = 25;                  % number of components to be found per patch
+    K = 15;                  % number of components to be found per patch
     tau = [];                 % std of gaussian kernel (size of neuron) default:5
     p = 2;                   % order of autoregressive system (p = 0 no dynamics, p=1 just decay, p = 2, both rise and decay)
     merge_thr = 0.4;         % merging threshold
