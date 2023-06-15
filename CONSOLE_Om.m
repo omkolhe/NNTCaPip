@@ -35,7 +35,7 @@ figure('Name','Spiking Raster');Show_Spikes_new(Spikes);
 %% Behavior
 
 [Behaviour] = readLever(parameters);
-
+%%
 figure('Name','Average Lever Traces for Hits');
 for i=1:Behaviour.nHit
     plot(Behaviour.hitTrace(i).time,Behaviour.hitTrace(i).trace,'Color',[0 0 0 0.2],'LineWidth',1.5);
