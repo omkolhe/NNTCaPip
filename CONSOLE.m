@@ -36,14 +36,23 @@ figure('Name','Spiking Raster');Show_Spikes_new(Spikes);
 
 [Behaviour] = readLever(parameters);
 %%
-figure();
+figure('Name','Average Lever Traces for Hits');
 for i=1:Behaviour.nHit
     plot(Behaviour.hitTrace(i).time,Behaviour.hitTrace(i).trace,'Color',[0 0 0 0.2],'LineWidth',1.5);
     hold on;
 end
-plot(Behaviour.hitTrace(1).time,mean(horzcat(Behaviour.hitTrace(1:end).trace)),2);
+plot(Behaviour.hitTrace(1).time,mean(horzcat(Behaviour.hitTrace(1:end).trace),2),'Color',[1 0 0 1],'LineWidth',2);
+yline(15,'--.b','Threshold','LabelHorizontalAlignment','left'); 
+ylabel('Lever deflection (in mV)');xlabel('Time (in s)');title('Average Lever Traces for Hits');
 
-%% Calcium Triggered Analysis
-figure();
-imagesc(parameters.caTime,1:1:size(DeltaFoverF,1),DeltaFoverF);colormap('hot'); 
+figure('Name','Average Lever Traces for Misses');
+for i=1:Behaviour.nMiss
+    plot(Behaviour.missTrace(i).time,Behaviour.missTrace(i).trace,'Color',[0 0 0 0.2],'LineWidth',1.5);
+    hold on;
+end
+plot(Behaviour.missTrace(1).time,mean(horzcat(Behaviour.missTrace(1:end).trace),2),'Color',[1 0 0 1],'LineWidth',2);
+yline(15,'--.b','Threshold','LabelHorizontalAlignment','left'); 
+ylabel('Lever deflection (in mV)');xlabel('Time (in s)');title('Average Lever Traces for Misses');
 
+
+%% Calcium Modulation Index
