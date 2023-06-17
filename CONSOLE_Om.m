@@ -55,6 +55,4 @@ yline(15,'--.b','Threshold','LabelHorizontalAlignment','left');
 ylabel('Lever deflection (in mV)');xlabel('Time (in s)');title('Average Lever Traces for Misses');
 
 
-figure();
-imagesc(parameters.caTime,1:1:size(DeltaFoverF,1),DeltaFoverF);colormap('hot'); 
 
